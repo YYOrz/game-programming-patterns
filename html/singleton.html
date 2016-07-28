@@ -45,14 +45,12 @@ treating a bullet wound with a splint. Since it&#8217;s so overused, most of thi
 chapter will be about <em>avoiding</em> singletons, but first, let&#8217;s go over the
 pattern itself.</p>
 <aside name="instance">
-
 <p>When much of the industry moved to object-oriented programming from C, one
 problem they ran into was &#8220;how do I get an instance?&#8221; They had some method they
 wanted to call but didn&#8217;t have an instance of the object that provides that
 method in hand. Singletons (in other words, making it global) were an easy way
 out.</p>
 </aside>
-
 <h2><a href="#the-singleton-pattern" name="the-singleton-pattern">The Singleton Pattern</a></h2>
 <p><em>Design Patterns</em> summarizes Singleton like this:</p>
 <blockquote>
@@ -82,9 +80,9 @@ instances of our file system wrapper, how can they get ahold of one?</p>
 instance, it also provides a globally available method to get it. This way,
 anyone anywhere can get their paws on our blessed instance. All together, the
 classic implementation looks like this:</p>
-<div class="codehilite"><pre><span class="k">class</span> <span class="nc">FileSystem</span>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">FileSystem</span>
 <span class="p">{</span>
-<span class="nl">public:</span>
+<span class="k">public</span><span class="o">:</span>
   <span class="k">static</span> <span class="n">FileSystem</span><span class="o">&amp;</span> <span class="n">instance</span><span class="p">()</span>
   <span class="p">{</span>
     <span class="c1">// Lazy initialize.</span>
@@ -92,7 +90,7 @@ classic implementation looks like this:</p>
     <span class="k">return</span> <span class="o">*</span><span class="n">instance_</span><span class="p">;</span>
   <span class="p">}</span>
 
-<span class="nl">private:</span>
+<span class="k">private</span><span class="o">:</span>
   <span class="n">FileSystem</span><span class="p">()</span> <span class="p">{}</span>
 
   <span class="k">static</span> <span class="n">FileSystem</span><span class="o">*</span> <span class="n">instance_</span><span class="p">;</span>
@@ -106,16 +104,16 @@ method grants access to the instance from anywhere in the codebase. It is also
 responsible for instantiating the singleton instance lazily the first time
 someone asks for it.</p>
 <p>A modern take looks like this:</p>
-<div class="codehilite"><pre><span class="k">class</span> <span class="nc">FileSystem</span>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">FileSystem</span>
 <span class="p">{</span>
-<span class="nl">public:</span>
+<span class="k">public</span><span class="o">:</span>
   <span class="k">static</span> <span class="n">FileSystem</span><span class="o">&amp;</span> <span class="n">instance</span><span class="p">()</span>
   <span class="p">{</span>
     <span class="k">static</span> <span class="n">FileSystem</span> <span class="o">*</span><span class="n">instance</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FileSystem</span><span class="p">();</span>
     <span class="k">return</span> <span class="o">*</span><span class="n">instance</span><span class="p">;</span>
   <span class="p">}</span>
 
-<span class="nl">private:</span>
+<span class="k">private</span><span class="o">:</span>
   <span class="n">FileSystem</span><span class="p">()</span> <span class="p">{}</span>
 <span class="p">};</span>
 </pre></div>
@@ -126,11 +124,9 @@ static variable is only run once, even in the presence of concurrency. So,
 assuming you&#8217;ve got a modern C++ compiler, this code is thread-safe where the
 first example is not.</p>
 <aside name="thread">
-
 <p>Of course, the thread-safety of your singleton class itself is an entirely
 different question! This just ensures that its <em>initialization</em> is.</p>
 </aside>
-
 <h2><a href="#why-we-use-it" name="why-we-use-it">Why We Use It</a></h2>
 <p>It seems we have a winner. Our file system wrapper is available wherever we need
 it without the tedium of passing it around everywhere. The class itself cleverly
@@ -164,20 +160,20 @@ singleton can even refer to another when initializing itself.</p>
     To make this work, we want it to be an abstract interface for a file system
     with subclasses that implement the interface for each platform. Here is the
     base class:</p>
-<div class="codehilite"><pre><span class="k">class</span> <span class="nc">FileSystem</span>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">FileSystem</span>
 <span class="p">{</span>
-<span class="nl">public:</span>
+<span class="k">public</span><span class="o">:</span>
   <span class="k">virtual</span> <span class="o">~</span><span class="n">FileSystem</span><span class="p">()</span> <span class="p">{}</span>
   <span class="k">virtual</span> <span class="kt">char</span><span class="o">*</span> <span class="n">readFile</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">path</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-  <span class="k">virtual</span> <span class="kt">void</span>  <span class="n">writeFile</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">path</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">contents</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">virtual</span> <span class="kt">void</span>  <span class="nf">writeFile</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">path</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">contents</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">};</span>
 </pre></div>
 
 
 <p>Then we define derived classes for a couple of platforms:</p>
-<div class="codehilite"><pre><span class="k">class</span> <span class="nc">PS3FileSystem</span> <span class="o">:</span> <span class="k">public</span> <span class="n">FileSystem</span>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">PS3FileSystem</span> <span class="o">:</span> <span class="k">public</span> <span class="n">FileSystem</span>
 <span class="p">{</span>
-<span class="nl">public:</span>
+<span class="k">public</span><span class="o">:</span>
   <span class="k">virtual</span> <span class="kt">char</span><span class="o">*</span> <span class="n">readFile</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">path</span><span class="p">)</span>
   <span class="p">{</span> 
     <span class="c1">// Use Sony file IO API...</span>
@@ -191,7 +187,7 @@ singleton can even refer to another when initializing itself.</p>
 
 <span class="k">class</span> <span class="nc">WiiFileSystem</span> <span class="o">:</span> <span class="k">public</span> <span class="n">FileSystem</span>
 <span class="p">{</span>
-<span class="nl">public:</span>
+<span class="k">public</span><span class="o">:</span>
   <span class="k">virtual</span> <span class="kt">char</span><span class="o">*</span> <span class="n">readFile</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">path</span><span class="p">)</span>
   <span class="p">{</span> 
     <span class="c1">// Use Nintendo file IO API...</span>
@@ -206,29 +202,29 @@ singleton can even refer to another when initializing itself.</p>
 
 
 <p>Next, we turn <code>FileSystem</code> into a singleton:</p>
-<div class="codehilite"><pre><span class="k">class</span> <span class="nc">FileSystem</span>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">FileSystem</span>
 <span class="p">{</span>
-<span class="nl">public:</span>
+<span class="k">public</span><span class="o">:</span>
   <span class="k">static</span> <span class="n">FileSystem</span><span class="o">&amp;</span> <span class="n">instance</span><span class="p">();</span>
 
   <span class="k">virtual</span> <span class="o">~</span><span class="n">FileSystem</span><span class="p">()</span> <span class="p">{}</span>
   <span class="k">virtual</span> <span class="kt">char</span><span class="o">*</span> <span class="n">readFile</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">path</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-  <span class="k">virtual</span> <span class="kt">void</span>  <span class="n">writeFile</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">path</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">contents</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">virtual</span> <span class="kt">void</span>  <span class="nf">writeFile</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">path</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">contents</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-<span class="nl">protected:</span>
+<span class="k">protected</span><span class="o">:</span>
   <span class="n">FileSystem</span><span class="p">()</span> <span class="p">{}</span>
 <span class="p">};</span>
 </pre></div>
 
 
 <p>The clever part is how the instance is created:</p>
-<div class="codehilite"><pre><span class="n">FileSystem</span><span class="o">&amp;</span> <span class="n">FileSystem</span><span class="o">::</span><span class="n">instance</span><span class="p">()</span>
+<div class="codehilite"><pre><span></span><span class="n">FileSystem</span><span class="o">&amp;</span> <span class="n">FileSystem</span><span class="o">::</span><span class="n">instance</span><span class="p">()</span>
 <span class="p">{</span>
-  <span class="err">#</span><span class="k">if</span> <span class="n">PLATFORM</span> <span class="o">==</span> <span class="n">PLAYSTATION3</span>
+  <span class="cp">#if PLATFORM == PLAYSTATION3</span>
     <span class="k">static</span> <span class="n">FileSystem</span> <span class="o">*</span><span class="n">instance</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PS3FileSystem</span><span class="p">();</span>
-  <span class="err">#</span><span class="n">elif</span> <span class="n">PLATFORM</span> <span class="o">==</span> <span class="n">WII</span>
+  <span class="cp">#elif PLATFORM == WII</span>
     <span class="k">static</span> <span class="n">FileSystem</span> <span class="o">*</span><span class="n">instance</span> <span class="o">=</span> <span class="k">new</span> <span class="n">WiiFileSystem</span><span class="p">();</span>
-  <span class="err">#</span><span class="n">endif</span>
+  <span class="cp">#endif</span>
 
   <span class="k">return</span> <span class="o">*</span><span class="n">instance</span><span class="p">;</span>
 <span class="p">}</span>
@@ -347,7 +343,7 @@ this, we&#8217;ll have separate loggers for different game <span
 name="worse">domains</span>: online, UI, audio, gameplay. But we can&#8217;t. Not only
 does our <code>Log</code> class no longer allow us to create multiple instances, that
 design limitation is entrenched in every single call site that uses it:</p>
-<div class="codehilite"><pre><span class="n">Log</span><span class="o">::</span><span class="n">instance</span><span class="p">().</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;Some event.&quot;</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="nt">Log</span><span class="o">:</span><span class="nd">:instance</span><span class="o">()</span><span class="nc">.write</span><span class="o">(</span><span class="s2">&quot;Some event.&quot;</span><span class="o">);</span>
 </pre></div>
 
 
@@ -355,13 +351,11 @@ design limitation is entrenched in every single call site that uses it:</p>
 originally did), we&#8217;ll have to fix both the class itself and every line of code
 that mentions it. Our convenient access isn&#8217;t so convenient anymore.</p>
 <aside name="worse">
-
 <p>It could be even worse than this. Imagine your <code>Log</code> class is in a library being
 shared across several <em>games</em>. Now, to change the design, you&#8217;ll have to
 coordinate the change across several groups of people, most of whom have neither
 the time nor the motivation to fix it.</p>
 </aside>
-
 <h3><a href="#lazy-initialization-takes-control-away-from-you" name="lazy-initialization-takes-control-away-from-you">Lazy initialization takes control away from you</a></h3>
 <p>In the desktop PC world of virtual memory and soft performance requirements,
 lazy initialization is a smart trick. Games are a different animal. Initializing
@@ -376,19 +370,17 @@ system allocates a chunk of heap when it initializes, we want to know <em>when</
 that initialization is going to happen, so that we can control <em>where</em> in the
 heap that memory will live.</p>
 <aside name="fragment">
-
 <p>See <a class="pattern" href="object-pool.html">Object Pool</a> for a detailed
 explanation of memory fragmentation.</p>
 </aside>
-
 <p>Because of these two problems, most games I&#8217;ve seen don&#8217;t rely on lazy
 initialization. Instead, they implement the Singleton pattern like this:</p>
-<div class="codehilite"><pre><span class="k">class</span> <span class="nc">FileSystem</span>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">FileSystem</span>
 <span class="p">{</span>
-<span class="nl">public:</span>
+<span class="k">public</span><span class="o">:</span>
   <span class="k">static</span> <span class="n">FileSystem</span><span class="o">&amp;</span> <span class="n">instance</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">instance_</span><span class="p">;</span> <span class="p">}</span>
 
-<span class="nl">private:</span>
+<span class="k">private</span><span class="o">:</span>
   <span class="n">FileSystem</span><span class="p">()</span> <span class="p">{}</span>
 
   <span class="k">static</span> <span class="n">FileSystem</span> <span class="n">instance_</span><span class="p">;</span>
@@ -408,7 +400,6 @@ entirely and use static functions instead? Calling <code>Foo::bar()</code> is si
 <code>Foo::instance().bar()</code>, and also makes it clear that you really are dealing
 with static memory.</p>
 <aside name="static">
-
 <p>The usual argument for choosing singletons over static classes is that if you
 decide to change the static class into a non-static one later, you&#8217;ll need to
 fix every call site. In theory, you don&#8217;t have to do that with singletons
@@ -419,7 +410,6 @@ instance method.</p>
 singleton, we&#8217;d still have to touch every call site. Given that, I&#8217;d rather have
 a simpler class and a simpler syntax to call into it.</p>
 </aside>
-
 <h2><a href="#what-we-can-do-instead" name="what-we-can-do-instead">What We Can Do Instead</a></h2>
 <p>If I&#8217;ve accomplished my goal so far, you&#8217;ll think twice before you pull
 Singleton out of your toolbox the next time you have a problem. But you still
@@ -433,22 +423,22 @@ ParticleManager, Sound, SoundManager, ManagerManager. Sometimes, for variety,
 they&#8217;ll throw a &#8220;System&#8221; or &#8220;Engine&#8221; in there, but it&#8217;s still the same idea.</p>
 <p>While caretaker classes are sometimes useful, often they just reflect
 unfamiliarity with OOP. Consider these two contrived classes:</p>
-<div class="codehilite"><pre><span class="k">class</span> <span class="nc">Bullet</span>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Bullet</span>
 <span class="p">{</span>
-<span class="nl">public:</span>
+<span class="k">public</span><span class="o">:</span>
   <span class="kt">int</span> <span class="n">getX</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">x_</span><span class="p">;</span> <span class="p">}</span>
   <span class="kt">int</span> <span class="n">getY</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">y_</span><span class="p">;</span> <span class="p">}</span>
 
   <span class="kt">void</span> <span class="n">setX</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span> <span class="n">x_</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span> <span class="p">}</span>
   <span class="kt">void</span> <span class="n">setY</span><span class="p">(</span><span class="kt">int</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span> <span class="n">y_</span> <span class="o">=</span> <span class="n">y</span><span class="p">;</span> <span class="p">}</span>
 
-<span class="nl">private:</span>
+<span class="k">private</span><span class="o">:</span>
   <span class="kt">int</span> <span class="n">x_</span><span class="p">,</span> <span class="n">y_</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="k">class</span> <span class="nc">BulletManager</span>
 <span class="p">{</span>
-<span class="nl">public:</span>
+<span class="k">public</span><span class="o">:</span>
   <span class="n">Bullet</span><span class="o">*</span> <span class="n">create</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">)</span>
   <span class="p">{</span>
     <span class="n">Bullet</span><span class="o">*</span> <span class="n">bullet</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Bullet</span><span class="p">();</span>
@@ -481,9 +471,9 @@ all, anything that has a <code>Bullet</code> will need the manager too, and how 
 instances of <code>BulletManager</code> do you need?</p>
 <p>The answer here is <em>zero</em>, actually. Here&#8217;s how we solve the &#8220;singleton&#8221; problem
 for our manager class:</p>
-<div class="codehilite"><pre><span class="k">class</span> <span class="nc">Bullet</span>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Bullet</span>
 <span class="p">{</span>
-<span class="nl">public:</span>
+<span class="k">public</span><span class="o">:</span>
   <span class="n">Bullet</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">)</span> <span class="o">:</span> <span class="n">x_</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">y_</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="p">{}</span>
 
   <span class="kt">bool</span> <span class="n">isOnScreen</span><span class="p">()</span>
@@ -494,7 +484,7 @@ for our manager class:</p>
 
   <span class="kt">void</span> <span class="n">move</span><span class="p">()</span> <span class="p">{</span> <span class="n">x_</span> <span class="o">+=</span> <span class="mi">5</span><span class="p">;</span> <span class="p">}</span>
 
-<span class="nl">private:</span>
+<span class="k">private</span><span class="o">:</span>
   <span class="kt">int</span> <span class="n">x_</span><span class="p">,</span> <span class="n">y_</span><span class="p">;</span>
 <span class="p">};</span>
 </pre></div>
@@ -516,17 +506,15 @@ areas of the code or even make it <span name="wrapper">private</span> to a
 single class. In those cases, providing a public global point of access weakens
 the architecture.</p>
 <aside name="wrapper">
-
 <p>For example, we may be wrapping our file system wrapper inside <em>another</em> layer
 of abstraction.</p>
 </aside>
-
 <p>We want a way to ensure single instantiation <em>without</em> providing global access.
 There are a couple of ways to accomplish this. Here&#8217;s one:</p>
 <p><span name="assert"></span></p>
-<div class="codehilite"><pre><span class="k">class</span> <span class="nc">FileSystem</span>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">FileSystem</span>
 <span class="p">{</span>
-<span class="nl">public:</span>
+<span class="k">public</span><span class="o">:</span>
   <span class="n">FileSystem</span><span class="p">()</span>
   <span class="p">{</span>
     <span class="n">assert</span><span class="p">(</span><span class="o">!</span><span class="n">instantiated_</span><span class="p">);</span>
@@ -535,7 +523,7 @@ There are a couple of ways to accomplish this. Here&#8217;s one:</p>
 
   <span class="o">~</span><span class="n">FileSystem</span><span class="p">()</span> <span class="p">{</span> <span class="n">instantiated_</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span> <span class="p">}</span>
 
-<span class="nl">private:</span>
+<span class="k">private</span><span class="o">:</span>
   <span class="k">static</span> <span class="kt">bool</span> <span class="n">instantiated_</span><span class="p">;</span>
 <span class="p">};</span>
 
@@ -549,7 +537,6 @@ first, then we&#8217;ve ensured no other code can either get at that instance or
 create their own. The class ensures the single instantiation requirement it
 cares about, but it doesn&#8217;t dictate how the class should be used.</p>
 <aside name="assert">
-
 <p>An <em>assertion</em> function is a way of embedding a contract into your code.
 When <code>assert()</code> is called, it evaluates the expression passed to it. If it
 evaluates to <code>true</code>, then it does nothing and lets the game continue. If it
@@ -566,7 +553,6 @@ unexpected, not later when that error finally manifests as something
 visibly wrong to the user. They are fences in your codebase, corralling bugs
 so that they can&#8217;t escape from the code that created them.</p>
 </aside>
-
 <p>The downside with this implementation is that the check to prevent multiple
 instantiation is only done at <em>runtime</em>. The Singleton pattern, in contrast,
 guarantees a single instance at compile time by the very nature of the class&#8217;s
@@ -625,12 +611,12 @@ designed to address these concerns.</p>
     these classes already have access to the same thing: their <code>GameObject</code> base
     class. We can use that to our advantage:</p>
 <p><span name="gameobject"></span></p>
-<div class="codehilite"><pre><span class="k">class</span> <span class="nc">GameObject</span>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">GameObject</span>
 <span class="p">{</span>
-<span class="nl">protected:</span>
+<span class="k">protected</span><span class="o">:</span>
   <span class="n">Log</span><span class="o">&amp;</span> <span class="n">getLog</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">log_</span><span class="p">;</span> <span class="p">}</span>
 
-<span class="nl">private:</span>
+<span class="k">private</span><span class="o">:</span>
   <span class="k">static</span> <span class="n">Log</span><span class="o">&amp;</span> <span class="n">log_</span><span class="p">;</span>
 <span class="p">};</span>
 
@@ -669,9 +655,9 @@ find it.</p>
 <p>We can reduce the number of global classes by piggybacking on existing ones
 like that. Instead of making singletons out of <code>Log</code>, <code>FileSystem</code>, and
 <code>AudioPlayer</code>, do this:</p>
-<div class="codehilite"><pre><span class="k">class</span> <span class="nc">Game</span>
+<div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Game</span>
 <span class="p">{</span>
-<span class="nl">public:</span>
+<span class="k">public</span><span class="o">:</span>
   <span class="k">static</span> <span class="n">Game</span><span class="o">&amp;</span> <span class="n">instance</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">instance_</span><span class="p">;</span> <span class="p">}</span>
 
   <span class="c1">// Functions to set log_, et. al. ...</span>
@@ -680,7 +666,7 @@ like that. Instead of making singletons out of <code>Log</code>, <code>FileSyste
   <span class="n">FileSystem</span><span class="o">&amp;</span>  <span class="n">getFileSystem</span><span class="p">()</span>  <span class="p">{</span> <span class="k">return</span> <span class="o">*</span><span class="n">fileSystem_</span><span class="p">;</span> <span class="p">}</span>
   <span class="n">AudioPlayer</span><span class="o">&amp;</span> <span class="n">getAudioPlayer</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="o">*</span><span class="n">audioPlayer_</span><span class="p">;</span> <span class="p">}</span>
 
-<span class="nl">private:</span>
+<span class="k">private</span><span class="o">:</span>
   <span class="k">static</span> <span class="n">Game</span> <span class="n">instance_</span><span class="p">;</span>
 
   <span class="n">Log</span>         <span class="o">*</span><span class="n">log_</span><span class="p">;</span>
@@ -692,7 +678,7 @@ like that. Instead of making singletons out of <code>Log</code>, <code>FileSyste
 
 <p>With this, only <code>Game</code> is globally available. Functions can get to the
 other systems <span name="demeter">through</span> it:</p>
-<div class="codehilite"><pre><span class="n">Game</span><span class="o">::</span><span class="n">instance</span><span class="p">().</span><span class="n">getAudioPlayer</span><span class="p">().</span><span class="n">play</span><span class="p">(</span><span class="n">VERY_LOUD_BANG</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="n">Game</span><span class="o">::</span><span class="n">instance</span><span class="p">().</span><span class="n">getAudioPlayer</span><span class="p">().</span><span class="n">play</span><span class="p">(</span><span class="n">VERY_LOUD_BANG</span><span class="p">);</span>
 </pre></div>
 
 
@@ -740,6 +726,6 @@ flexibility with how that object is configured.</p>
 </nav>
 </div>
 </div>
-<footer>&copy; 2009-2014 Robert Nystrom</footer>
+<footer>&copy; 2009-2015 Robert Nystrom</footer>
 </body>
 </html>

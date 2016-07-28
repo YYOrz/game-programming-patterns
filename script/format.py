@@ -193,9 +193,9 @@ def format_file(path, nav, skip_up_to_date):
     prev_link, next_link = make_prev_next(title)
 
     contents = contents.replace('<aside', '<aside markdown="1"')
-
+    contents = unicode(contents, 'utf-8')
     body = markdown.markdown(contents,
-            extensions=['extra', 'def_list', 'codehilite'])
+            extensions=['extra', 'def_list', 'codehilite']).encode('utf-8')
     body = body.replace('<aside markdown="1"', '<aside')
 
     body = smartypants.smartypants(body)
